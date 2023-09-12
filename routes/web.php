@@ -1,10 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Admin;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\IndexController as AdminController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\InfoController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,23 +17,22 @@ use App\Http\Controllers\InfoController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'] );
+//Route::get('/', function () {
+//    return view('welcome');
+//});
 
-Route::get('/admin', [Admin\IndexController::class, 'index'] );
+//Route::view('/','welcome');
 
-Route::get('/hello/{name}', static function(string $name): string{
-    return  "Hello, {$name}";
+Route::get('/news',[NewsController::class, 'index']) //'index' метод в классе NewsController
+        ->name('news.index');
+Route::get('news/{id}',[NewsController::class,'show']) // url news/{id}
+        ->where('id','\d+') // 'id','\d+' регулярное выражени говорит что 'id' должно быть числом 
+        ->name('news.show'); // 'news.show' имя роута
+Route::get('news/categories',[NewsController::class,'categories']) 
+        ->name('news.categories'); 
+Route::group(['prefix'=>'admin', 'as' => 'admin.'], function (){ // 'prefix'=>'admin' к url добавится префикс admin/
+//'as' => 'admin.'  для всех роутов будет префикс admin.
+    Route::get('/', AdminController::class)->name('index');
+    Route::resource('categories', AdminCategoryController::class);// url admin/categories/
+    Route::resource('news', AdminNewsController::class);// url admin/news/
 });
-
-Route::get('/user/{name}', static function(string $name): string{
-    return  "Приветствую, {$name}";
-});
-
-Route::get('/info', [InfoController::class, 'index']);
-
-Route::get('/news', [NewsController::class, 'news'])
-->name('news');
-
-Route::get('/news/{category}/{id}', [NewsController::class, 'newsOne'])
-->where('id', '\d+')
-->name('newsOne');
