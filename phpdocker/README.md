@@ -30,9 +30,9 @@ add your own hostname on your `/etc/hosts`
 
 Service|Address outside containers
 -------|--------------------------
-Webserver|[localhost:33000](http://localhost:33000)
-Mailhog web interface|[localhost:33001](http://localhost:33001)
-MySQL|**host:** `localhost`; **port:** `33002`
+Webserver|[localhost:5555](http://localhost:5555)
+Mailhog web interface|[localhost:5556](http://localhost:5556)
+MySQL|**host:** `localhost`; **port:** `5557`
 
 ## Hosts within your environment ##
 
@@ -42,7 +42,6 @@ Service|Hostname|Port number
 ------|---------|-----------
 php-fpm|php-fpm|9000
 MySQL|mysql|3306 (default)
-Memcached|memcached|11211 (default)
 Redis|redis|6379 (default)
 SMTP (Mailhog)|mailhog|1025 (default)
 
