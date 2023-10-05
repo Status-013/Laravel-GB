@@ -1,30 +1,19 @@
 @extends('layouts.admin')
-@section("title") Добавит категорию @parent @stop
-@section("content")
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Добавить категорию</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-        
-    </div>
-</div>
-
-<form method="post" action="{{ route('admin.categories.store') }}">
-    @csrf
-    <div class="form-group">
-        <label for="title">Категория</label>
-        <input type="text" name="title" class="form-control" id="title" value="">
-    </div>
-    <div class="form-group">
-        <label for="description">Описание</label>
-        <textarea name="description" class="form-control" id="desctiption"></textarea>
-    </div>
-    <br>
-    <button type="submit" class="btn btn-success">Save</button>
-</form>
+@section('title')| Create a category @stop
+@section('content')
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            <x-admin.alert type="danger" :message="$error"/>
+        @endforeach
+    @endif
+    <form method="post" action="{{ route('admin.categories.store') }}">
+        @csrf
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="Some category name" value="{{ old('name') }}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Create</button>
+        </div>
+    </form>
 @endsection
-
-{{--@push('js')
-<script>
-    alert("Add news!!!");
-</script>
-@endpush--}}

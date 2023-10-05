@@ -1,26 +1,19 @@
-@extends('layouts.main') <!-- main.blaid.php -->
-@section("title") Список категорий @parent @stop
-@section('content') {{-- @yield('content') --}}
-<div class="container">
-    <br>
-    <h1 class="fw-light"><strong>Список категорий</strong></h1> 
-</div>      
-
-<div class="album py-5 bg-light">
-    <div class="container">
- @forelse($categories as $category) 
-                    <h2><strong>{{ $category->title }}</strong></h2>
-                    <p >{{ $category->description}}</p>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <a href="{{route('category.show',$category)}}" class="btn btn-sm btn-outline-secondary">Show</a>
-                        </div>
-                    </div>
-                    <br>
-        @empty
-        <h2>Категорий нет</h2>
-        @endforelse
+@extends('layouts.app')
+@section('title')| Categories @stop
+@section('content')
+    <div class="p-4 p-md-5 mb-4 rounded text-body-emphasis bg-body-secondary">
+        <div class="col-lg-6 px-0">
+            <h1 class="display-6 fst-italic">Categories</h1>
+        </div>
     </div>
-</div>
+    <div class="d-flex justify-content-center">
+        <div class="btn-group">
+            @forelse($categories as $category)
+                <a href="{{ route('news.index', ['categoryId' => $category->id]) }}" class="btn btn-primary border-dark" aria-current="page">{{ ucfirst($category->name) }}</a>
+            @empty
+                <p>There are no categories</p>
+            @endforelse
+        </div>
+    </div>
+    {{ $categories->links() }}
 @endsection
-

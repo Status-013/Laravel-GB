@@ -2,20 +2,22 @@
 
 namespace Tests\Feature\Http;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_News_List_Success(): void
+    public function testReturnsSuccessOnIndexRequest(): void
     {
-        $response = $this->get(route('news.category.show'));
+        $response = $this->get(route('category.index'));
 
-        //$response->assertSeeText('Новости');
+        $response->assertSuccessful();
         $response->assertStatus(200);
+    }
+
+    public function testCorrectPageContentIsDisplayedOnIndexRequest(): void
+    {
+        $response = $this->get(route('category.index'));
+
+        $response->assertSeeText('Categories');
     }
 }

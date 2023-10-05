@@ -1,48 +1,87 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-use App\Http\Controllers\Admin\IndexController as AdminController;
-use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\IndexController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\Admin\NewsController as AdminNewsController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\IndexController as AdminIndexController;
 use Illuminate\Support\Facades\Route;
 
 /*
-  |--------------------------------------------------------------------------
-  | Web Routes
-  |--------------------------------------------------------------------------
-  |
-  | Here is where you can register web routes for your application. These
-  | routes are loaded by the RouteServiceProvider and all of them will
-  | be assigned to the "web" middleware group. Make something great!
-  |
- */
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
-//Route::get('/', function () {
-//    return view('welcome');
-//});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', IndexController::class)->name('index');
-Route::name('news.')
-        ->prefix('news')
-        ->group(function () {
-            Route::get('/', [NewsController::class, 'index']) //'index' метод в классе NewsController
+Route::get('/categories', [CategoryController::class, 'index'])
+    ->name('category.index');
+
+Route::prefix('news')->name('news.')
+    ->group(function () {
+        Route::get('/{categoryId}', [NewsController::class, 'index'])
+            ->whereNumber('categoryId')
             ->name('index');
-            Route::get('/{news}', [NewsController::class, 'show']) // url news/{id} {name} - имя модели, ларавел извлечет первичный ключ сам
-            ->name('show'); // 'news.show' имя роута     
-        });
-Route::name('category.')
-        ->prefix('categories')
-        ->group(function () {
-            Route::get('/', [CategoryController::class, 'index'])
-            ->name('index');
-            Route::get('/{category}', [CategoryController::class, 'show'])
+        Route::get('/{categoryId}/{postId}', [NewsController::class, 'show'])
+            ->whereNumber('categoryId')
+            ->whereNumber('postId')
             ->name('show');
-        });
-Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () { // 'prefix'=>'admin' к url добавится префикс admin/
-//'as' => 'admin.'  для всех роутов будет префикс admin.
-    Route::get('/', AdminController::class)->name('index');
-    Route::resource('categories', AdminCategoryController::class);
-    Route::resource('news', AdminNewsController::class);
 });
+
+Route::prefix('admin')->name('admin.')
+    ->middleware(['auth', 'is.admin'])
+    ->group(function () {
+        Route::get('/', AdminIndexController::class)
+            ->name('index');
+        Route::prefix('news')->name('news.')
+            ->group(function () {
+                Route::get('/', [AdminNewsController::class, 'index'])
+                    ->name('index');
+                Route::get('/create', [AdminNewsController::class, 'create'])
+                    ->name('create');
+                Route::post('/store', [AdminNewsController::class, 'store'])
+                    ->name('store');
+                Route::get('/edit/{post}', [AdminNewsController::class, 'edit'])
+                    ->name('edit');
+                Route::put('/update/{post}', [AdminNewsController::class, 'update'])
+                    ->name('update');
+                Route::delete('/delete/{post}', [AdminNewsController::class, 'destroy'])
+                    ->name('delete');
+            });
+        Route::prefix('categories')->name('categories.')
+            ->group(function () {
+                Route::get('/', [AdminCategoryController::class, 'index'])
+                    ->name('index');
+                Route::get('/create', [AdminCategoryController::class, 'create'])
+                    ->name('create');
+                Route::post('/store', [AdminCategoryController::class, 'store'])
+                    ->name('store');
+                Route::get('/edit/{category}', [AdminCategoryController::class, 'edit'])
+                    ->name('edit');
+                Route::put('/update/{category}', [AdminCategoryController::class, 'update'])
+                    ->name('update');
+                Route::delete('/delete/{category}', [AdminCategoryController::class, 'destroy'])
+                    ->name('delete');
+            });
+        Route::prefix('users')->name('users.')
+            ->group(function () {
+                Route::get('/', [AdminUserController::class, 'index'])
+                    ->name('index');
+                Route::put('/updateIsAdmin/{user}', [AdminUserController::class, 'updateIsAdmin'])
+                    ->name('updateIsAdmin');
+            });
+    });
+
+Route::get('/welcome/{username}', static function(string $username): string {
+    return "Hello, {$username}";
+});
+
+Auth::routes();

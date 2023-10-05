@@ -1,65 +1,53 @@
 @extends('layouts.admin')
-@section("title") Редактировать новость @parent @stop
-{{--@dump(old())--}}
-@section("content")
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">Редактировать новость</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-
-    </div>
-</div>
-@if($errors->any()) <!-- вывод массива ошибок валидации -->
+@section('title')| Edit the "{{ $post->title }}" post @stop
+@section('content')
+    @if($errors->any())
         @foreach($errors->all() as $error)
-    <x-alert :message="$error" type="danger"></x-alert>
+            <x-admin.alert type="danger" :message="$error"/>
         @endforeach
     @endif
-@include('inc.message')
-<form  method="post" action="{{ route('admin.news.update',$news) }}" enctype="multipart/form-data">
-    @csrf
-    @method('PUT')
-    <div class="form-group">
-        <label for="title">Заголовок</label>
-        <input type="text" name="title" class="form-control" id="title" value="{{ old('title')?? $news->title }}">
-    </div>
-    <div class="form-group">
-        <label for="category_id">Категория</label>
-        <select class="form-control" name="category_id" id="category_id">
-            @foreach($categories as $category)
-            <option value="{{ $category->id }}" @selected(old('category_id') == $category->id || $news->category_id == $category->id)> 
-                                           <!-- @if($category->id == old('category_id'))selected @endif; -->
-            {{ $category->title }}</option>
-            @endforeach
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="author">Автор</label>
-        <input type="text" name="author" class="form-control" id="author" value="{{ old('author') ?? $news->author }}">
-    </div>
-    <div class="form-group">
-        <label for="img_url">image_url</label>
-        <img src="{{ $news->image }}" alt="image" width='100'/>
-        <input type="file" name="img_url" class="form-control" id="img_url">
-    </div>
-    <div class="form-group">
-        <label for="status">Статус</label>
-        <select class="form-control" name="status" id="status">
-            <option @selected(old('status') === 'draft' || $news->status === 'draft')>draft</option>
-            <option @selected(old('status') === 'active' || $news->status === 'active')>active</option>
-            <option @selected(old('status') === 'blocked' || $news->status === 'blocked')>blocked</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <label for="description">Описание</label>
-        <textarea name="description" class="form-control" id="desctiption">{{ old('description') ?? $news->description}}</textarea>
-    </div>
-    <br>
-    <button type="submit" class="btn btn-success">Save</button>
-</form>
+    <form method="post" enctype="multipart/form-data" action="{{ route('admin.news.update', $post) }}">
+        @csrf
+        @method('PUT')
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" placeholder="Some article title" value="{{ old('title') ?? $post->title }}">
+        </div>
+        <div class="mb-3">
+            <label for="image" class="form-label">Image</label>
+            <img alt="post image" style="max-height: 300px; max-width: 100%" src="{{ $post->image_url ? asset($post->image_url) : asset('storage/placeholder.png') }}">
+            <input type="file" class="form-control" id="image" name="image">
+        </div>
+        <div class="mb-3">
+            <label for="content" class="form-label">Content</label>
+            <textarea name="content" id="content" cols="30" rows="3" class="form-control">{{ old('content') ?? $post->content }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" cols="30" rows="4" class="form-control">{{ old('description') ?? $post->description}}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <select name="category_id" id="category">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" @selected(old('category_id') == $category->id || $post->category_id == $category->id)>{{ ucfirst($category->name) }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select name="status" id="status">
+                @foreach($statuses as $status)
+                    <option value="{{ $status }}" @selected(old('status') == $status || $post->status == $status)>{{ ucfirst($status) }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="author" class="form-label">Author</label>
+            <input type="text" class="form-control" id="author" name="author" placeholder="Some author" value="{{ old('author') ?? $post->author }}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-3">Edit</button>
+        </div>
+    </form>
 @endsection
-
-
-{{--@push('js')
-<script>
-    alert("Add news!!!");
-</script>
-@endpush--}}

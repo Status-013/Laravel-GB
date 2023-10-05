@@ -3,64 +3,69 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Category\StoreCategoryRequest;
+use App\Http\Requests\Admin\Category\UpdateCategoryRequest;
+use App\Models\Category;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(): View
     {
-        return \view('admin.categories.index');
+        $categories = Category::paginate(10);
+
+        return view('admin.categories.index')->with('categories', $categories);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function create(): View
     {
-       // dd(app());
-        return \view('admin.categories.create');
+        return view('admin.categories.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        dd($request->all());
+        $data = $request->validated();
+        $category = new Category($data);
+
+        try {
+            $category->save();
+
+            return redirect(route('admin.categories.index'))->with('success', 'Category successfully created');
+        } catch (QueryException) {
+            return back()->with('error', 'Category was not created! Please try again.');
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Category $category): View
     {
-        //
+        return view('admin.categories.edit', ['category' => $category]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        //
+        $data = $request->validated();
+        $category->fill($data);
+
+        try {
+            $category->save();
+
+            return redirect(route('admin.categories.index'))->with('success', 'Category successfully updated');
+        } catch (QueryException) {
+            return back()->with('error', 'Category was not updated! Please try again.');
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Category $category): RedirectResponse
     {
-        //
-    }
+        try {
+            $category->delete();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+            return redirect(route('admin.categories.index'))->with('success', 'Category successfully deleted');
+        } catch (QueryException) {
+            return back()->with('error', 'Category was not deleted! Please try again.');
+        }
     }
 }

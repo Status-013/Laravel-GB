@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Category extends Model
 {
     use HasFactory;
-    
-    public function news(): HasMany { 
-        // метод извлечет все новости связанные с категорией        
-        return $this->hasMany(News::class, 'category_id'); // отношение один ко многим
-        // News::class - имя класса связанной модели , 'category_id' имя поля по которому идет связь
+
+    protected $fillable = [
+        'name'
+    ];
+
+    public function news(): HasMany
+    {
+        return $this->hasMany(News::class);
     }
 }

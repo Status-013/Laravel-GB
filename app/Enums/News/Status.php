@@ -2,11 +2,12 @@
 
 namespace App\Enums\News;
 
-enum Status :string{
+enum Status: string
+{
     case DRAFT = 'draft';
     case ACTIVE = 'active';
     case BLOCKED = 'blocked';
-    
+
     public static function getEnums(): array
     {
         return [

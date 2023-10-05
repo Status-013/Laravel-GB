@@ -2,32 +2,33 @@
 
 namespace App\Models;
 
+use App\Enums\News\Status;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class News extends Model {
-
+class News extends Model
+{
     use HasFactory;
 
-    protected $fillable = [ // поля которые можно менять в таблице
+    protected $fillable = [
         'title',
+        'description',
+        'content',
+        'image_url',
         'category_id',
-        'author',
         'status',
-        'image',
-        'description'
+        'author'
     ];
 
-    public function category(): BelongsTo {
-        
-        return $this->belongsTo(Category::class, 'category_id');
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
-    
-    public function scopeStatus(Builder $query) : void{ //scope  для фильтра по статусу
-        if(request()->has('f') && request()->f != 'selected'){    
-            $query->where('status', request()->query('f', 'draft')); // запрос который будет применятся когда фильтр запушен
-        }
+
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('status', Status::ACTIVE->value);
     }
 }
