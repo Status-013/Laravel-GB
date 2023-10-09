@@ -17,7 +17,7 @@
             <option @selected(request()->get('filter') === $status)>{{ ucfirst($status) }}</option>
         @endforeach
     </select>
-    <div class="table-responsive small">
+    <div class="table-responsive small col-md-12">
         <table class="table table-striped table-sm">
             <thead>
             <tr>
@@ -37,7 +37,7 @@
                 <tr>
                     <td>{{ $post->id }}</td>
                     <td>{{ $post->title }}</td>
-                    <td>{{ $post->content }}</td>
+                    <td>{!! $post->content !!}</td>
                     <td>{{ $post->description }}</td>
                     <td>{{ $post->category->name }}</td>
                     <td>{{ $post->status }}</td>

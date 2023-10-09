@@ -30,6 +30,12 @@
                         Users
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center gap-2 @if(request()->routeIs('admin.parser')) active @endif" href="{{ route('admin.parser') }}">
+                        <svg class="bi"><use xlink:href="#wheel"/></svg>
+                        Parser
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
