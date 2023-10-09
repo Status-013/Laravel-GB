@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ParserController;
+use App\Http\Controllers\Admin\ResourceController as AdminResourceController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\SocialsController;
 use App\Http\Controllers\CategoryController;
@@ -79,6 +80,17 @@ Route::prefix('admin')->name('admin.')
                     ->name('index');
                 Route::put('/updateIsAdmin/{user}', [AdminUserController::class, 'updateIsAdmin'])
                     ->name('updateIsAdmin');
+            });
+        Route::prefix('resources')->name('resources.')
+            ->group(function () {
+                Route::get('/', [AdminResourceController::class, 'index'])
+                    ->name('index');
+                Route::get('/create', [AdminResourceController::class, 'create'])
+                    ->name('create');
+                Route::post('store', [AdminResourceController::class, 'store'])
+                    ->name('store');
+                Route::delete('/delete/{resource}', [AdminResourceController::class, 'destroy'])
+                    ->name('delete');
             });
         Route::get('parser', ParserController::class)->name('parser');
     });

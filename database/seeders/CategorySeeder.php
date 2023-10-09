@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class CategorySeeder extends Seeder
 {
@@ -13,21 +13,21 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('categories')->insert($this->getCategories());
+        foreach ($this->getCategoriesData() as $categoryData) {
+            $category = new Category($categoryData);
+            $category->save();
+        }
     }
 
-    private function getCategories(): array
+    private function getCategoriesData(): array
     {
-        $categoryNames = ['movies', 'tv series', 'video games', 'off-topic'];
-        $categories = [];
-
-        foreach ($categoryNames as $categoryName) {
-            $categories[] = [
-                'name' => $categoryName,
-                'created_at' => now(),
-            ];
-        }
-
-        return $categories;
+        return [
+            [
+                'name' => 'video games'
+            ],
+            [
+                'name' => 'entertainment'
+            ]
+        ];
     }
 }
