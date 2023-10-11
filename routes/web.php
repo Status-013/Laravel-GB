@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\ParserController;
+use App\Http\Controllers\Admin\ResourceController as AdminResourceController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Auth\SocialsController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NewsController;
@@ -78,7 +81,24 @@ Route::prefix('admin')->name('admin.')
                 Route::put('/updateIsAdmin/{user}', [AdminUserController::class, 'updateIsAdmin'])
                     ->name('updateIsAdmin');
             });
+        Route::prefix('resources')->name('resources.')
+            ->group(function () {
+                Route::get('/', [AdminResourceController::class, 'index'])
+                    ->name('index');
+                Route::get('/create', [AdminResourceController::class, 'create'])
+                    ->name('create');
+                Route::post('store', [AdminResourceController::class, 'store'])
+                    ->name('store');
+                Route::delete('/delete/{resource}', [AdminResourceController::class, 'destroy'])
+                    ->name('delete');
+            });
+        Route::get('parser', ParserController::class)->name('parser');
     });
+
+Route::group(['middleware' => 'guest'], function () {
+    Route::get('/auth/github/redirect', [SocialsController::class, 'redirect'])->name('github');
+    Route::get('auth/github/callback', [SocialsController::class, 'callback']);
+});
 
 Route::get('/welcome/{username}', static function(string $username): string {
     return "Hello, {$username}";
